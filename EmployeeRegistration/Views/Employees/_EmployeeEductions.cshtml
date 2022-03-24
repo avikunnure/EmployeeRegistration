@@ -1,0 +1,57 @@
+﻿@model EmployeeRegistration.Models.Employee
+
+<div>
+    <table class="table table-bordered">
+
+        <thead>
+            <tr>
+                <th>
+                    Degree
+                </th>
+                <th>
+                    Year of Passing
+                </th>
+                <th>
+                    Percentage
+                </th>
+                <th>
+                    actions
+                </th>
+            </tr>
+
+
+        </thead>
+        <tbody>
+            @if (Model.Educations != null)
+            {
+                for (var i = 0; i < Model.Educations.Count; i++)
+                {
+
+                    <tr>
+                        <th>
+
+                            @Html.TextBoxFor(model=>model.Educations[i].DegreeName,"",new{@class="form-control"})
+                            @Html.ValidationMessageFor(model=>model.Educations[i].DegreeName,"",new{@class="text-danger"})
+                        </th>
+                        <th>
+                            @{
+                                var selectListItems = new List<SelectListItem>();
+                                for (int j   = 1900; j < DateTime.Now.Year; j++)
+                                {
+                                    selectListItems.Add(new SelectListItem() { Text = j.ToString(), Value = j.ToString() });
+                                }
+                            }
+                            @Html.DropDownListFor(model=>model.Educations[i].yearOfPassing,selectListItems,"",new{@class="form-control"})
+                            @Html.ValidationMessageFor(model=>model.Educations[i].yearOfPassing,"",new{@class="text-danger"})
+                        </th>
+                        <th>
+                            @Html.TextBoxFor(model=>model.Educations[i].Percentage,"",new{@class="form-control"})
+                            @Html.ValidationMessageFor(model=>model.Educations[i].Percentage,"",new{@class="text-danger"})
+                        </th>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>

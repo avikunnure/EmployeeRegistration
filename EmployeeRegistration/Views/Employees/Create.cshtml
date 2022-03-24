@@ -1,0 +1,144 @@
+﻿@model EmployeeRegistration.Models.Employee
+@{
+    if (Model.EmployeeId == 0)
+    {
+        Model.DateOfBirth = DateTime.Now.AddYears(-18);
+    }
+}
+<h1>Create</h1>
+
+<h4>Employee</h4>
+<hr />
+<div class="row">
+    <form formmethod="post">
+        <div class="col-md-12">
+
+            @Html.ValidationSummary(true,"",new{@class="text-danger"})
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model=>model.EmployeeId)
+            <div class="col-md-4">
+                    @Html.HiddenFor(model=>model.EmployeePhoto)
+                    <img id="img" src="@Model.EmployeePhoto" width="100" height="100" />
+
+                    <input style="display:none;" type="file" name="photo" id="photo" accept="image/*">
+                    @Html.ValidationMessageFor(model=>model.EmployeePhoto,"",new{@class="text-danger"})
+                
+            </div>
+            <div class="row">
+                <div class="col-md-1">
+                    <button class="btn btn-sm btn-primary " type="button" onclick=" document.getElementById('photo').click();"> Upload</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model=>model.Name,new {@class="control-label"})
+                    @Html.TextBoxFor(model=>model.Name,"",new{@class="form-control"})
+                    @Html.ValidationMessageFor(model=>model.Name,"",new{@class="text-danger"})
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model=>model.DateOfBirth,new {@class="control-label"})
+                    @Html.TextBoxFor(model=>model.DateOfBirth,"{0:d}",new{@class="form-control date-control",@readonly="readonly"})
+                    @Html.ValidationMessageFor(model=>model.DateOfBirth,"",new{@class="text-danger"})
+
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model=>model.Gender,new {@class="control-label"})
+                    @{
+                        var List2 = new List<SelectListItem>(){
+                        new SelectListItem()
+                        {
+                            Text="Male",
+                            Value="Male",
+                        },
+                        new SelectListItem()
+                        {
+                            Text="Female",
+                            Value="Female"
+                        }
+
+                    };
+                    }
+                    @Html.DropDownListFor(model=>model.Gender,List2,"",new{@class="form-control"})
+                    @Html.ValidationMessageFor(model=>model.Gender,"",new{@class="text-danger"})
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model=>model.ContactNo,new {@class="control-label"})
+                    @Html.TextBoxFor(model=>model.ContactNo,"",new{@class="form-control"})
+                    @Html.ValidationMessageFor(model=>model.ContactNo,"",new{@class="text-danger"})
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model=>model.EmailId,new {@class="control-label"})
+                    @Html.TextBoxFor(model=>model.EmailId,"",new{@class="form-control"})
+                    @Html.ValidationMessageFor(model=>model.EmailId,"",new{@class="text-danger"})
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <button type="submit" formmethod="post" formaction="@Url.Action("AddEduction","Employees")" class=" btn btn-primary"> Add Education </button>
+                    @await Html.PartialAsync("~/Views/Employees/_EmployeeEductions.cshtml",model:Model)
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    @if (Model.EmployeeId > 0)
+                    {
+
+                        <button type="submit" formmethod="post" formaction="@Url.Action("Edit","Employees",new{id=Model.EmployeeId})" class="btn btn-primary">Save</button>
+
+                    }
+                    else
+                    {
+
+                        <button type="submit" formmethod="post" formaction="@Url.Action("Create","Employees")" class="btn btn-primary">Save</button>
+
+                    }
+                    <a asp-action="Index" class="btn btn-info">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+<script>
+    $(document).ready(function(){
+        $('.date-control').datepicker({
+            endDate:new Date((new Date()).setFullYear((new Date().getFullYear())-18)),
+        });
+    })
+    function readFile() {
+        const filesize = this.files[0].size / 1024;
+        if (filesize > 5000) {
+            alert('Please upload image less than 5000 KB');
+            return;
+        }
+        if (this.files && this.files[0]) {
+            var FR= new FileReader();
+            FR.addEventListener("load", function(e) {
+                debugger;
+                document.getElementById("img").src       = e.target.result;
+                $("#EmployeePhoto").val( e.target.result);
+            });
+            FR.readAsDataURL( this.files[0] );
+        }
+    }
+
+    document.getElementById("photo").addEventListener("change", readFile);
+</script>
+}
