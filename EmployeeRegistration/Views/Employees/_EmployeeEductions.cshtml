@@ -26,17 +26,20 @@
             {
                 for (var i = 0; i < Model.Educations.Count; i++)
                 {
+                    var dispCon = Model.Educations[i].IsDeleted ? "none" : "";
 
-                    <tr>
+                    <tr style="display:@dispCon;">
                         <th>
-
+                            @Html.HiddenFor(model=>model.Educations[i].EmployeeId)
+                            @Html.HiddenFor(model=>model.Educations[i].Id)
+                            @Html.HiddenFor(model=>model.Educations[i].IsDeleted,new {@class="IsDeleted"})
                             @Html.TextBoxFor(model=>model.Educations[i].DegreeName,"",new{@class="form-control"})
                             @Html.ValidationMessageFor(model=>model.Educations[i].DegreeName,"",new{@class="text-danger"})
                         </th>
                         <th>
                             @{
                                 var selectListItems = new List<SelectListItem>();
-                                for (int j   = 1900; j < DateTime.Now.Year; j++)
+                                for (int j = 1900; j < DateTime.Now.Year; j++)
                                 {
                                     selectListItems.Add(new SelectListItem() { Text = j.ToString(), Value = j.ToString() });
                                 }
@@ -48,6 +51,10 @@
                             @Html.TextBoxFor(model=>model.Educations[i].Percentage,"",new{@class="form-control"})
                             @Html.ValidationMessageFor(model=>model.Educations[i].Percentage,"",new{@class="text-danger"})
                         </th>
+
+                        <th>
+                            <button type="button" class="btn btn-danger" onclick="DeleteItem(this);">Delete</button>
+                        </th>
                     </tr>
                 }
             }
@@ -55,3 +62,4 @@
         </tbody>
     </table>
 </div>
+

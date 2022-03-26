@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeRegistration.Context;
 using EmployeeRegistration.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace EmployeeRegistration.Controllers
 {
@@ -20,9 +21,20 @@ namespace EmployeeRegistration.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index( DateTime? FromDate = null , DateTime? ToDate = null, string? Gender = null)
         {
-            return View(await _context.Employees.ToListAsync());
+            var List=new List<Employee>();
+            var listquery=_context.Employees.AsQueryable();
+            if (FromDate != null && ToDate != null)
+            {
+                listquery=listquery.Where(x => x.DateOfBirth <= ToDate && x.DateOfBirth >= FromDate);
+            }
+            if(Gender != null)
+            {
+                listquery = listquery.Where(x => x.Gender == Gender);
+            }
+            List = listquery.ToList();
+            return View(List);
         }
 
 
@@ -37,13 +49,24 @@ namespace EmployeeRegistration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Employee employee)
         {
+
+            for (int i = 0; i < employee.Educations.Count; i++)
+            {
+                if (employee.Educations[i].IsDeleted)
+                {
+
+                    ModelState.Remove($"Educations[{i}].yearOfPassing");
+                    ModelState.Remove($"Educations[{i}].DegreeName");
+                }
+
+            }
             if (ModelState.IsValid)
             {
                 employee.DateOfBirth=employee.DateOfBirth.ToUniversalTime();
                 _context.Add(employee);
 
                 await _context.SaveChangesAsync();
-                foreach (var item in employee.Educations)
+                foreach (var item in employee.Educations.Where(x=>x.IsDeleted==false))
                 {
                     item.EmployeeId = employee.EmployeeId;
                     if (item.Id == 0)
@@ -68,6 +91,17 @@ namespace EmployeeRegistration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddEduction(Employee employee)
         {
+            for (int i = 0; i < employee.Educations.Count; i++)
+            {
+                if (employee.Educations[i].IsDeleted)
+                {
+
+                    ModelState.Remove($"Educations[{i}].yearOfPassing");
+                    ModelState.Remove($"Educations[{i}].DegreeName");
+                }
+
+            }
+
             if (ModelState.IsValid)
             {
                 employee.Educations.Add(new EmployeeEducation());
@@ -97,13 +131,16 @@ namespace EmployeeRegistration.Controllers
                 foreach (var item in employee.Educations)
                 {
                     item.EmployeeId = id;
-                    if (item.Id == 0)
+                    if (item.Id == 0 && item.IsDeleted==false)
                     {
                         _context.Add(item);
                     }
-                    else
+                    else if (item.IsDeleted == false)
                     {
                         _context.Update(item);
+                    }else if( item.IsDeleted == true && item.Id>0)
+                    {
+                        _context.Remove(item);
                     }
                 }
                 _context.Update(employee);

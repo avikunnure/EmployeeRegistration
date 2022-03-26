@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<EmployeeRegistration.Context.EmployeeContext>(options =>
 {
     options.UseNpgsql(connectionString: builder.Configuration.GetConnectionString("EmployeeDB"));
+});
+
+builder.Services.AddMvc(option =>
+{
+    // add the custom binder at the top of the collection
+    option.ModelBinderProviders.Insert(0, new DateTimeModelBinderProvider());
 });
 
 var app = builder.Build();

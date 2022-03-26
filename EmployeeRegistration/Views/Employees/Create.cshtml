@@ -17,12 +17,12 @@
             @Html.AntiForgeryToken()
             @Html.HiddenFor(model=>model.EmployeeId)
             <div class="col-md-4">
-                    @Html.HiddenFor(model=>model.EmployeePhoto)
-                    <img id="img" src="@Model.EmployeePhoto" width="100" height="100" />
+                @Html.HiddenFor(model=>model.EmployeePhoto)
+                <img id="img" src="@Model.EmployeePhoto" width="100" height="100" />
 
-                    <input style="display:none;" type="file" name="photo" id="photo" accept="image/*">
-                    @Html.ValidationMessageFor(model=>model.EmployeePhoto,"",new{@class="text-danger"})
-                
+                <input style="display:none;" type="file" name="photo" id="photo" accept="image/*">
+                @Html.ValidationMessageFor(model=>model.EmployeePhoto,"",new{@class="text-danger"})
+
             </div>
             <div class="row">
                 <div class="col-md-1">
@@ -37,30 +37,39 @@
 
                 </div>
             </div>
+
             <div class="col-md-4">
                 <div class="form-group">
                     @Html.LabelFor(model=>model.DateOfBirth,new {@class="control-label"})
-                    @Html.TextBoxFor(model=>model.DateOfBirth,"{0:d}",new{@class="form-control date-control",@readonly="readonly"})
+                    @Html.TextBoxFor(model=>model.DateOfBirth,"{0:dd/MM/yyyy}",new{@class="form-control date-control",@readonly="readonly"})
                     @Html.ValidationMessageFor(model=>model.DateOfBirth,"",new{@class="text-danger"})
 
                 </div>
             </div>
-            
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.LabelFor(model=>model.Age,new {@class="control-label"})
+                    @Html.TextBoxFor(model=>model.Age,"",new{@class="form-control",@readonly="readonly"})
+
+
+                </div>
+            </div>
+
             <div class="col-md-4">
                 <div class="form-group">
                     @Html.LabelFor(model=>model.Gender,new {@class="control-label"})
                     @{
                         var List2 = new List<SelectListItem>(){
-                        new SelectListItem()
-                        {
-                            Text="Male",
-                            Value="Male",
-                        },
-                        new SelectListItem()
-                        {
-                            Text="Female",
-                            Value="Female"
-                        }
+                    new SelectListItem()
+                    {
+                    Text="Male",
+                    Value="Male",
+                    },
+                    new SelectListItem()
+                    {
+                    Text="Female",
+                    Value="Female"
+                    }
 
                     };
                     }
@@ -119,7 +128,15 @@
 <script>
     $(document).ready(function(){
         $('.date-control').datepicker({
+             format:'dd/mm/yyyy',
             endDate:new Date((new Date()).setFullYear((new Date().getFullYear())-18)),
+        }) .on('changeDate',function(e) {
+            var dob = new Date("06/24/2008");
+            var month_diff = Date.now() - dob.getTime();
+            var age_dt = new Date(month_diff);
+            var year = age_dt.getUTCFullYear();
+            var age = Math.abs(year - 1970);
+            $("#Age").val(Age);
         });
     })
     function readFile() {
@@ -137,6 +154,12 @@
             });
             FR.readAsDataURL( this.files[0] );
         }
+    }
+
+    function DeleteItem(data){
+        var row =$(data).closest('tr');
+       $(row).find(".IsDeleted").val(true);
+        $(row).css('display','none');
     }
 
     document.getElementById("photo").addEventListener("change", readFile);

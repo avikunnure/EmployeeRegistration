@@ -9,6 +9,48 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form >
+<div class="col-md-4">
+    <div class="form-group">
+        @Html.Label("FromDate","FromDate",new {@class="control-label"})
+        @Html.TextBox("FromDate","","{0:dd/MM/yyyy}",new{@class="form-control date-control",@readonly="readonly"})
+        @Html.ValidationMessage("FromDate","",new{@class="text-danger"})
+
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="form-group">
+        @Html.Label("ToDate","ToDate",new {@class="control-label"})
+        @Html.TextBox("ToDate","","{0:dd/MM/yyyy}",new{@class="form-control date-control",@readonly="readonly"})
+        @Html.ValidationMessage("ToDate","",new{@class="text-danger"})
+
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="form-group">
+        @Html.Label("Gender","Gender",new {@class="control-label"})
+        @{
+            var List2 = new List<SelectListItem>(){
+        new SelectListItem()
+        {
+        Text="Male",
+        Value="Male",
+        },
+        new SelectListItem()
+        {
+        Text="Female",
+        Value="Female"
+        }
+
+        };
+        }
+        @Html.DropDownList("Gender",List2,"",new{@class="form-control"})
+        @Html.ValidationMessage("Gender","",new{@class="text-danger"})
+
+    </div>
+</div>
+
+<button type="submit" formmethod="get" formaction="@Url.Action("Index","Employees")" class="btn btn-primary">Show</button>
 <table class="table">
     <thead>
         <tr>
@@ -31,28 +73,51 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmployeeId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfBirth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContactNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmailId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.EmployeeId">Edit</a> 
-                <a asp-action="Delete" asp-route-id="@item.EmployeeId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfBirth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ContactNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmailId)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.EmployeeId">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.EmployeeId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+</form>
+
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+<script>
+    $(document).ready(function(){
+        $('.date-control').datepicker({
+             format:'dd/mm/yyyy',
+            endDate:new Date((new Date()).setFullYear((new Date().getFullYear())-18)),
+        }) .on('changeDate',function(e) {
+          debugger;
+          var month_diff = Date.now() - e.date.getTime();
+          var age_dt = new Date(month_diff);
+          var year = age_dt.getUTCFullYear();
+          var age = Math.abs(year - 1970);
+          $("#Age").val(age);
+        });
+    })
+</script>
+}

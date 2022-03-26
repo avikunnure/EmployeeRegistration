@@ -9,12 +9,12 @@ namespace EmployeeRegistration.Context
     {
         public EmployeeContext()
         {
-
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         public EmployeeContext(DbContextOptions<EmployeeContext> options):base(options)
         {
-            
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         public DbSet<Employee> Employees { get; set; }

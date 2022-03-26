@@ -17,7 +17,6 @@ namespace EmployeeRegistration.Models
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
-        [NotMapped]
         public Int32 Age { get; set; }
 
         [Required]
@@ -33,6 +32,8 @@ namespace EmployeeRegistration.Models
 
         [Required]
         public string EmployeePhoto { get; set; }
+
+
 
         public List<EmployeeEducation> Educations { get; set; }
         public Employee()

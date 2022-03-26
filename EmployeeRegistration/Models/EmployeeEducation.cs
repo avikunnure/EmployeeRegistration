@@ -22,5 +22,12 @@ namespace EmployeeRegistration.Models
         [Range(0,100)]
         public Decimal Percentage { get; set; }
 
+        [NotMapped]
+        public bool IsDeleted { get; set; }
+
+        public EmployeeEducation()
+        {
+            IsDeleted = false;
+        }
     }
 }
